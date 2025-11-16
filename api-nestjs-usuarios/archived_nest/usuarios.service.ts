@@ -1,14 +1,15 @@
+// @ts-nocheck
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Usuario } from '../entities/usuario.entity';
+import { DataSource } from 'typeorm';
+import { Usuario } from '../src/entities/usuario.entity';
 
 @Injectable()
 export class UsuariosService {
-  constructor(
-    @InjectRepository(Usuario)
-    private usuariosRepository: Repository<Usuario>,
-  ) {}
+  private usuariosRepository;
+
+  constructor(private dataSource: DataSource) {
+    this.usuariosRepository = this.dataSource.getRepository(Usuario);
+  }
 
   async crear(nombre: string, rut: string): Promise<Usuario> {
     const usuario = this.usuariosRepository.create({ nombre, rut });
@@ -20,11 +21,10 @@ export class UsuariosService {
   }
 
   async obtenerPorId(id: number): Promise<Usuario | null> {
-    const found = await this.usuariosRepository.findOne({ where: { id } });
-    return found ?? null;
+    return this.usuariosRepository.findOne({ where: { id } });
   }
 
-  async actualizar(id: number, nombre: string, rut: string): Promise<Usuario | null> {
+  async actualizar(id: number, nombre: string, rut: string): Promise<Usuario> {
     await this.usuariosRepository.update(id, { nombre, rut });
     return this.obtenerPorId(id);
   }

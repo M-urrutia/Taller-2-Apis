@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>App APIs - Frontend</title>
+    <!-- Tailwind CDN (mobile-first) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
+    <header class="bg-white shadow-sm">
+      <div class="max-w-xl mx-auto px-4 py-4 flex items-center justify-between">
+        <h1 class="text-lg font-semibold">APIs · Frontend</h1>
+        <nav class="flex gap-2">
+          <button id="btn-ciudades" class="px-3 py-1 rounded bg-blue-500 text-white text-sm">Ciudades</button>
+          <button id="btn-paises" class="px-3 py-1 rounded bg-green-500 text-white text-sm">Países</button>
+          <button id="btn-usuarios" class="px-3 py-1 rounded bg-indigo-500 text-white text-sm">Usuarios</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="flex-1 max-w-xl mx-auto w-full px-4 py-6">
+      <div id="content" class="space-y-4">
+        <!-- El contenido dinámico irá aquí -->
+        <p class="text-sm text-gray-600">Selecciona una sección para ver datos.</p>
+      </div>
+    </main>
+
+    <footer class="bg-white border-t">
+      <div class="max-w-xl mx-auto px-4 py-3 text-xs text-gray-500">
+        Frontend simple con JavaScript puro y Tailwind (mobile-first). Consulta `app-frontend/README.md` para instrucciones.
+      </div>
+    </footer>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
