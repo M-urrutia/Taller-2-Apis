@@ -14,9 +14,11 @@
 import express, { Request, Response } from 'express';
 import sqlite3 from 'sqlite3';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import path from 'path';
 
 const app = express();
+app.use(cors()); // Habilitar CORS para comunicación con el frontend
 app.use(bodyParser.json());
 
 // Configuración de base de datos

@@ -3,32 +3,126 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>App APIs - Frontend</title>
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="description" content="Aplicación móvil para gestionar usuarios, países y ciudades" />
+    <title>App APIs - Gestión Integral</title>
     <!-- Tailwind CDN (mobile-first) -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Animaciones personalizadas */
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .fade-in { animation: fadeIn 0.3s ease-out; }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      .spinner {
+        border: 3px solid rgba(59, 130, 246, 0.3);
+        border-top-color: #3b82f6;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 0.8s linear infinite;
+      }
+      
+      /* Tabs activos */
+      .tab-active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transform: scale(1.05);
+      }
+      .tab-inactive {
+        background: #e5e7eb;
+        color: #4b5563;
+      }
+      .tab-inactive:hover { background: #d1d5db; }
+      
+      /* Cards */
+      .card { transition: all 0.2s; }
+      .card:active { transform: scale(0.98); }
+    </style>
   </head>
-  <body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
-    <header class="bg-white shadow-sm">
-      <div class="max-w-xl mx-auto px-4 py-4 flex items-center justify-between">
-        <h1 class="text-lg font-semibold">APIs · Frontend</h1>
-        <nav class="flex gap-2">
-          <button id="btn-ciudades" class="px-3 py-1 rounded bg-blue-500 text-white text-sm">Ciudades</button>
-          <button id="btn-paises" class="px-3 py-1 rounded bg-green-500 text-white text-sm">Países</button>
-          <button id="btn-usuarios" class="px-3 py-1 rounded bg-indigo-500 text-white text-sm">Usuarios</button>
+  <body class="bg-gradient-to-br from-blue-50 to-indigo-100 text-gray-900 min-h-screen flex flex-col">
+    <!-- Header con navegación -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+      <div class="max-w-4xl mx-auto px-4 py-3">
+        <h1 class="text-xl font-bold text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3">
+          📱 Gestión Integral APIs
+        </h1>
+        <nav class="flex gap-2 justify-center">
+          <button id="btn-usuarios" class="tab-button px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 text-white">
+            👥 Usuarios
+          </button>
+          <button id="btn-paises" class="tab-button px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200">
+            🌍 Países
+          </button>
+          <button id="btn-ciudades" class="tab-button px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200">
+            🏙️ Ciudades
+          </button>
         </nav>
       </div>
     </header>
 
-    <main class="flex-1 max-w-xl mx-auto w-full px-4 py-6">
-      <div id="content" class="space-y-4">
-        <!-- El contenido dinámico irá aquí -->
-        <p class="text-sm text-gray-600">Selecciona una sección para ver datos.</p>
+    <!-- Área de notificaciones -->
+    <div id="notification-area" class="fixed top-20 left-0 right-0 z-40 px-4 pointer-events-none"></div>
+
+    <!-- Contenido principal -->
+    <main class="flex-1 max-w-4xl mx-auto w-full px-4 py-6">
+      <!-- Loading spinner -->
+      <div id="loading" class="hidden flex flex-col items-center justify-center py-12">
+        <div class="spinner"></div>
+        <p class="mt-4 text-gray-600 text-sm">Cargando datos...</p>
       </div>
+
+      <!-- Contenedor de error -->
+      <div id="error-container" class="hidden fade-in">
+        <div class="bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-400 rounded-xl shadow-lg overflow-hidden">
+          <div class="bg-red-500 px-4 py-2">
+            <h3 class="font-bold text-white flex items-center">
+              <span class="text-2xl mr-2">⚠️</span>
+              Error de Conexión
+            </h3>
+          </div>
+          <div class="p-6">
+            <div class="flex items-start mb-4">
+              <div class="flex-1">
+                <p id="error-message" class="text-gray-800 text-base mb-3 leading-relaxed"></p>
+                <div class="bg-white border border-red-200 rounded-lg p-3 mb-4">
+                  <p class="text-sm text-gray-600 font-medium mb-2">💡 Posibles soluciones:</p>
+                  <ul class="text-sm text-gray-700 space-y-1 ml-4">
+                    <li>• Verifica que la API esté corriendo</li>
+                    <li>• Revisa que el puerto sea el correcto</li>
+                    <li>• Asegúrate de que CORS esté habilitado</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <button id="btn-retry" class="flex-1 px-5 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg font-semibold hover:from-red-700 hover:to-red-800 transition-all shadow-md hover:shadow-lg transform hover:scale-105">
+                🔄 Reintentar Conexión
+              </button>
+              <button id="btn-dismiss-error" class="px-5 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-all">
+                ❌ Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenido dinámico -->
+      <div id="content" class="space-y-4 fade-in"></div>
     </main>
 
-    <footer class="bg-white border-t">
-      <div class="max-w-xl mx-auto px-4 py-3 text-xs text-gray-500">
-        Frontend simple con JavaScript puro y Tailwind (mobile-first). Consulta `app-frontend/README.md` para instrucciones.
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-auto">
+      <div class="max-w-4xl mx-auto px-4 py-4">
+        <div class="text-center">
+          <p class="text-xs text-gray-500 mb-1">💻 Desarrollado con JavaScript Puro + Tailwind CSS</p>
+          <p class="text-xs text-gray-400">Mobile First • Responsive Design • Apache Cordova Ready</p>
+        </div>
       </div>
     </footer>
 
