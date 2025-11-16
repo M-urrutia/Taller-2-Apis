@@ -76,7 +76,7 @@ function updateActiveTabs(activeBtn) {
 
 // ========== RENDERIZADO ==========
 
-function renderList(title, items, fields, formFields, onSubmit) {
+function renderList(title, items, fields, formFields, onSubmit, singularName) {
   content.innerHTML = '';
   content.classList.add('fade-in');
   
@@ -107,7 +107,7 @@ function renderList(title, items, fields, formFields, onSubmit) {
   const form = document.createElement('form');
   form.className = 'space-y-3';
   form.innerHTML = `
-    <h3 class="font-semibold text-lg text-gray-800 mb-2">Nuevo ${title.slice(0, -1)}</h3>
+    <h3 class="font-semibold text-lg text-gray-800 mb-2">${singularName}</h3>
     ${formFields.map(field => `
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">${field.label}</label>
@@ -122,10 +122,10 @@ function renderList(title, items, fields, formFields, onSubmit) {
     `).join('')}
     <div class="flex gap-2 pt-2">
       <button type="submit" class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition">
-        ✅ Guardar
+        Guardar
       </button>
-      <button type="button" id="btn-cancel" class="px-4 py-2 bg-gray-400 text-white rounded-lg font-medium hover:bg-gray-500 transition">
-        ❌ Cancelar
+      <button type="button" id="btn-cancel" class="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition">
+        Cancelar
       </button>
     </div>
   `;
@@ -179,7 +179,7 @@ function renderList(title, items, fields, formFields, onSubmit) {
       <p class="text-gray-600 font-medium mt-2">La base de datos está vacía</p>
       <p class="text-gray-500 text-sm mt-1">Agrega el primer elemento usando el botón <strong>"+ Nuevo"</strong> arriba</p>
       <div class="mt-4 inline-block px-4 py-2 bg-white rounded-lg shadow-sm text-xs text-gray-500">
-        📊 Total de registros: <span class="font-bold text-gray-700">0</span>
+        Total de registros: <span class="font-bold text-gray-700">0</span>
       </div>
     `;
     list.appendChild(empty);
@@ -237,11 +237,12 @@ async function showUsuarios() {
         { name: 'rut', label: 'RUT', placeholder: 'Ej: 12345678-9' },
         { name: 'edad', label: 'Edad', type: 'number', placeholder: 'Ej: 25' }
       ],
-      createUsuario
+      createUsuario,
+      'Nuevo Usuario'
     );
   } catch (error) {
     hideLoading();
-    showError(`❌ Error conectando con API de Usuarios (Puerto 3001)\n\n${error.message}\n\n💡 Verifica que la API esté corriendo:\ncd api-nestjs-usuarios\nnpm run dev`);
+    showError(`Error conectando con API de Usuarios (Puerto 3001)\n\n${error.message}\n\n Verifica que la API esté corriendo:\ncd api-nestjs-usuarios\nnpm run dev`);
     console.error('Error:', error);
   }
 }
@@ -266,11 +267,12 @@ async function showPaises() {
         { name: 'nombre', label: 'Nombre del País', placeholder: 'Ej: Chile' },
         { name: 'dirigente', label: 'Dirigente', placeholder: 'Ej: Presidente...' }
       ],
-      createPais
+      createPais,
+      'Nuevo País'
     );
   } catch (error) {
     hideLoading();
-    showError(`❌ Error conectando con API de Países (Puerto 3003)\n\n${error.message}\n\n💡 Verifica que la API esté corriendo:\ncd api-fastapi-paises\npython main.py`);
+    showError(`Error conectando con API de Países (Puerto 3003)\n\n${error.message}\n\n Verifica que la API esté corriendo:\ncd api-fastapi-paises\npython main.py`);
     console.error('Error:', error);
   }
 }
@@ -298,11 +300,12 @@ async function showCiudades() {
         { name: 'nombre', label: 'Nombre de la Ciudad', placeholder: 'Ej: Santiago' },
         { name: 'poblacion', label: 'Población', type: 'number', placeholder: 'Ej: 5000000' }
       ],
-      createCiudad
+      createCiudad,
+      'Nueva Ciudad'
     );
   } catch (error) {
     hideLoading();
-    showError(`❌ Error conectando con API de Ciudades (Puerto 3002)\n\n${error.message}\n\n💡 Verifica que la API esté corriendo:\ncd api-express-ciudades\nnpm run dev`);
+    showError(`Error conectando con API de Ciudades (Puerto 3002)\n\n${error.message}\n\n Verifica que la API esté corriendo:\ncd api-express-ciudades\nnpm run dev`);
     console.error('Error:', error);
   }
 }

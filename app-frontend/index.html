@@ -33,12 +33,16 @@
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         transform: scale(1.05);
+        color: white;
       }
       .tab-inactive {
         background: #e5e7eb;
-        color: #4b5563;
+        color: #1f2937;
       }
-      .tab-inactive:hover { background: #d1d5db; }
+      .tab-inactive:hover { 
+        background: #d1d5db;
+        color: #111827;
+      }
       
       /* Cards */
       .card { transition: all 0.2s; }
@@ -50,10 +54,10 @@
     <header class="bg-white shadow-md sticky top-0 z-50">
       <div class="max-w-4xl mx-auto px-4 py-3">
         <h1 class="text-xl font-bold text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3">
-          📱 Gestión Integral APIs
+          Gestión Integral APIs
         </h1>
         <nav class="flex gap-2 justify-center">
-          <button id="btn-usuarios" class="tab-button px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 text-white">
+          <button id="btn-usuarios" class="tab-button px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200">
             👥 Usuarios
           </button>
           <button id="btn-paises" class="tab-button px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200">
@@ -120,8 +124,8 @@
     <footer class="bg-white border-t mt-auto">
       <div class="max-w-4xl mx-auto px-4 py-4">
         <div class="text-center">
-          <p class="text-xs text-gray-500 mb-1">💻 Desarrollado con JavaScript Puro + Tailwind CSS</p>
-          <p class="text-xs text-gray-400">Mobile First • Responsive Design • Apache Cordova Ready</p>
+          <p class="text-xs text-gray-500 mb-1">Desarrollado con JavaScript Puro + Tailwind CSS</p>
+          <p class="text-xs text-gray-400">Mobile First • Responsive Design</p>
         </div>
       </div>
     </footer>
