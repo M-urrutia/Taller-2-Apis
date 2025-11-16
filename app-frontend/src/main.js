@@ -16,7 +16,7 @@ const btnPaises = document.getElementById('btn-paises');
 const btnCiudades = document.getElementById('btn-ciudades');
 
 // Estado global
-let currentView = 'usuarios';
+let currentView = localStorage.getItem('currentView') || 'usuarios';
 
 // ========== UTILIDADES ==========
 
@@ -151,17 +151,22 @@ function renderList(title, items, fields, formFields, onSubmit, singularName) {
   // Manejar submit
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    console.log('[FORM] Submit iniciado, vista actual:', currentView);
     const formData = new FormData(form);
     const data = {};
     formData.forEach((value, key) => { data[key] = value; });
     
     try {
+      console.log('[FORM] Llamando onSubmit con datos:', data);
       await onSubmit(data);
+      console.log('[FORM] onSubmit completado exitosamente');
       form.reset();
       formContainer.classList.add('hidden');
       showNotification('✅ Elemento creado exitosamente');
+      console.log('[FORM] Antes de loadCurrentView, currentView:', currentView);
       loadCurrentView();
     } catch (error) {
+      console.error('[FORM] Error en submit:', error);
       showNotification('❌ Error al crear: ' + error.message, 'error');
     }
   });
@@ -213,7 +218,9 @@ function renderList(title, items, fields, formFields, onSubmit, singularName) {
 // ========== VISTAS ==========
 
 async function showUsuarios() {
+  console.log('[VISTA] Cambiando a Usuarios');
   currentView = 'usuarios';
+  localStorage.setItem('currentView', 'usuarios');
   updateActiveTabs(btnUsuarios);
   showLoading();
   
@@ -242,13 +249,15 @@ async function showUsuarios() {
     );
   } catch (error) {
     hideLoading();
-    showError(`Error conectando con API de Usuarios (Puerto 3001)\n\n${error.message}\n\n Verifica que la API esté corriendo:\ncd api-nestjs-usuarios\nnpm run dev`);
+    showError(`Error conectando con API de Usuarios (Puerto 3001)\n\n${error.message}`);
     console.error('Error:', error);
   }
 }
 
 async function showPaises() {
+  console.log('[VISTA] Cambiando a Países');
   currentView = 'paises';
+  localStorage.setItem('currentView', 'paises');
   updateActiveTabs(btnPaises);
   showLoading();
   
@@ -272,13 +281,15 @@ async function showPaises() {
     );
   } catch (error) {
     hideLoading();
-    showError(`Error conectando con API de Países (Puerto 3003)\n\n${error.message}\n\n Verifica que la API esté corriendo:\ncd api-fastapi-paises\npython main.py`);
+    showError(`Error conectando con API de Países (Puerto 3003)\n\n${error.message}`);
     console.error('Error:', error);
   }
 }
 
 async function showCiudades() {
+  console.log('[VISTA] Cambiando a Ciudades');
   currentView = 'ciudades';
+  localStorage.setItem('currentView', 'ciudades');
   updateActiveTabs(btnCiudades);
   showLoading();
   
@@ -305,12 +316,13 @@ async function showCiudades() {
     );
   } catch (error) {
     hideLoading();
-    showError(`Error conectando con API de Ciudades (Puerto 3002)\n\n${error.message}\n\n Verifica que la API esté corriendo:\ncd api-express-ciudades\nnpm run dev`);
+    showError(`Error conectando con API de Ciudades (Puerto 3002)\n\n${error.message}`);
     console.error('Error:', error);
   }
 }
 
 function loadCurrentView() {
+  console.log('[RELOAD] Recargando vista actual:', currentView);
   if (currentView === 'usuarios') showUsuarios();
   else if (currentView === 'paises') showPaises();
   else if (currentView === 'ciudades') showCiudades();
@@ -326,4 +338,5 @@ btnDismissError.addEventListener('click', hideError);
 
 // ========== INICIALIZACIÓN ==========
 
-showUsuarios();
+// Cargar la vista guardada o mostrar Usuarios por defecto
+loadCurrentView();
