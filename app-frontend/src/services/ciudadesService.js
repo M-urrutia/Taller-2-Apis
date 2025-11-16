@@ -1,4 +1,4 @@
-const BASE = window.__API_BASE_CIUDADES__ || 'http://localhost:3000';
+const BASE = window.__API_BASE_CIUDADES__ || 'http://localhost:3002';
 const API = `${BASE}/api/ciudades`;
 
 export async function getCiudades() {

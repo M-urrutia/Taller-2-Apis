@@ -1,4 +1,4 @@
-const BASE = window.__API_BASE_PAISES__ || 'http://localhost:8000';
+const BASE = window.__API_BASE_PAISES__ || 'http://localhost:3003';
 const API = `${BASE}/api/paises`;
 
 export async function getPaises() {
