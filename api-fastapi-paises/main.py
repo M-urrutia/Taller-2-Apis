@@ -10,21 +10,61 @@ Endpoints:
   PUT    /api/paises/{id}   - Actualizar país
   DELETE /api/paises/{id}   - Eliminar país
 
-Ejecutar: python main.py
+Ejecutar: uvicorn main:app --host 0.0.0.0 --port 3003 --reload
 """
+
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 import sqlite3
-import json
-from typing import Dict, Any
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from typing import List, Optional
+
+# ============================================================================
+# CONFIGURACIÓN DE LA APLICACIÓN
+# ============================================================================
+
+app = FastAPI(
+    title="API de Países",
+    description="API REST para gestionar países",
+    version="1.0.0"
+)
+
+# Configurar CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 DATABASE = 'db_paises.db'
+
+# ============================================================================
+# MODELOS PYDANTIC
+# ============================================================================
+
+class Pais(BaseModel):
+    """Modelo de datos para un País"""
+    id: Optional[int] = None
+    nombre: str
+    dirigente: str
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "id": 1,
+                "nombre": "Chile",
+                "dirigente": "Gabriel Boric"
+            }
+        }
 
 # ============================================================================
 # UTILIDADES DE BASE DE DATOS
 # ============================================================================
 
 def init_db():
-    """Inicializar tabla de paises"""
+    """Inicializar tabla de países"""
     try:
         conn = sqlite3.connect(DATABASE)
         c = conn.cursor()
@@ -47,229 +87,126 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
-def parse_json_body(body: bytes) -> Dict[str, Any]:
-    """Parsear JSON del body de la solicitud"""
+# Inicializar DB al arrancar
+init_db()
+
+# ============================================================================
+# ENDPOINTS
+# ============================================================================
+
+@app.get("/", tags=["Root"])
+async def root():
+    """Endpoint raíz - información de la API"""
+    return {
+        "mensaje": "API de Países - FastAPI",
+        "version": "1.0.0",
+        "documentacion": "http://localhost:3003/docs"
+    }
+
+@app.get("/api/paises", response_model=List[Pais], tags=["Países"])
+async def obtener_paises():
+    """Obtiene todos los países registrados"""
     try:
-        return json.loads(body.decode('utf-8'))
-    except:
-        return {}
+        conn = get_db()
+        c = conn.cursor()
+        c.execute('SELECT id, nombre, dirigente FROM paises ORDER BY id')
+        paises = [Pais(id=row[0], nombre=row[1], dirigente=row[2]) for row in c.fetchall()]
+        conn.close()
+        return paises
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Error al obtener países: {str(e)}')
 
-# ============================================================================
-# HANDLER HTTP
-# ============================================================================
-
-class PaisesHandler(BaseHTTPRequestHandler):
-    """Manejador de solicitudes HTTP para la API de países"""
-
-    def do_GET(self):
-        """Manejar solicitudes GET"""
-        # Endpoint raíz
-        if self.path == '/' or self.path == '':
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json')
-            self.end_headers()
-            response = {'mensaje': 'API de Países', 'version': '1.0.0'}
-            self.wfile.write(json.dumps(response).encode('utf-8'))
-            return
-
-        # GET /api/paises - obtener todos
-        if self.path == '/api/paises':
-            try:
-                conn = get_db()
-                c = conn.cursor()
-                c.execute('SELECT id, nombre, dirigente FROM paises ORDER BY id')
-                paises = [{'id': row[0], 'nombre': row[1], 'dirigente': row[2]} 
-                         for row in c.fetchall()]
-                conn.close()
-                self.send_response(200)
-                self.send_header('Content-type', 'application/json')
-                self.end_headers()
-                self.wfile.write(json.dumps(paises).encode('utf-8'))
-            except Exception as e:
-                self.send_error(500)
-            return
-
-        # GET /api/paises/{id} - obtener por ID
-        if self.path.startswith('/api/paises/') and self.path.count('/') == 3:
-            try:
-                pais_id = int(self.path.split('/')[-1])
-                conn = get_db()
-                c = conn.cursor()
-                c.execute('SELECT id, nombre, dirigente FROM paises WHERE id = ?', (pais_id,))
-                row = c.fetchone()
-                conn.close()
-                if row:
-                    pais = {'id': row[0], 'nombre': row[1], 'dirigente': row[2]}
-                    self.send_response(200)
-                    self.send_header('Content-type', 'application/json')
-                    self.end_headers()
-                    self.wfile.write(json.dumps(pais).encode('utf-8'))
-                else:
-                    self.send_response(404)
-                    self.send_header('Content-type', 'application/json')
-                    self.end_headers()
-                    self.wfile.write(json.dumps({'error': 'País no encontrado'}).encode('utf-8'))
-            except Exception as e:
-                self.send_error(500)
-            return
-
-        self.send_error(404)
-
-    def do_POST(self):
-        """Manejar solicitudes POST"""
-        if self.path == '/api/paises':
-            try:
-                content_length = int(self.headers.get('Content-Length', 0))
-                body = self.rfile.read(content_length)
-                data = parse_json_body(body)
-
-                nombre = data.get('nombre')
-                dirigente = data.get('dirigente')
-
-                # Validar datos
-                if not nombre or not dirigente:
-                    self.send_response(400)
-                    self.send_header('Content-type', 'application/json')
-                    self.end_headers()
-                    self.wfile.write(json.dumps({'error': 'nombre y dirigente son requeridos'}).encode('utf-8'))
-                    return
-
-                conn = get_db()
-                c = conn.cursor()
-                c.execute('INSERT INTO paises (nombre, dirigente) VALUES (?, ?)', 
-                         (nombre, dirigente))
-                conn.commit()
-                pais_id = c.lastrowid
-                conn.close()
-
-                self.send_response(201)
-                self.send_header('Content-type', 'application/json')
-                self.end_headers()
-                response = {'id': pais_id, 'nombre': nombre, 'dirigente': dirigente}
-                self.wfile.write(json.dumps(response).encode('utf-8'))
-            except sqlite3.IntegrityError:
-                self.send_response(400)
-                self.send_header('Content-type', 'application/json')
-                self.end_headers()
-                self.wfile.write(json.dumps({'error': 'El país ya existe'}).encode('utf-8'))
-            except Exception as e:
-                self.send_error(500)
-            return
-
-        self.send_error(404)
-
-    def do_PUT(self):
-        """Manejar solicitudes PUT"""
-        if self.path.startswith('/api/paises/') and self.path.count('/') == 3:
-            try:
-                pais_id = int(self.path.split('/')[-1])
-                content_length = int(self.headers.get('Content-Length', 0))
-                body = self.rfile.read(content_length)
-                data = parse_json_body(body)
-
-                nombre = data.get('nombre')
-                dirigente = data.get('dirigente')
-
-                # Validar datos
-                if not nombre or not dirigente:
-                    self.send_response(400)
-                    self.send_header('Content-type', 'application/json')
-                    self.end_headers()
-                    self.wfile.write(json.dumps({'error': 'nombre y dirigente son requeridos'}).encode('utf-8'))
-                    return
-
-                conn = get_db()
-                c = conn.cursor()
-                c.execute('UPDATE paises SET nombre = ?, dirigente = ? WHERE id = ?',
-                         (nombre, dirigente, pais_id))
-                conn.commit()
-                if c.rowcount == 0:
-                    conn.close()
-                    self.send_response(404)
-                    self.send_header('Content-type', 'application/json')
-                    self.end_headers()
-                    self.wfile.write(json.dumps({'error': 'País no encontrado'}).encode('utf-8'))
-                else:
-                    conn.close()
-                    self.send_response(200)
-                    self.send_header('Content-type', 'application/json')
-                    self.end_headers()
-                    response = {'id': pais_id, 'nombre': nombre, 'dirigente': dirigente}
-                    self.wfile.write(json.dumps(response).encode('utf-8'))
-            except Exception as e:
-                self.send_error(500)
-            return
-
-        self.send_error(404)
-
-    def do_DELETE(self):
-        """Manejar solicitudes DELETE"""
-        if self.path.startswith('/api/paises/') and self.path.count('/') == 3:
-            try:
-                pais_id = int(self.path.split('/')[-1])
-                conn = get_db()
-                c = conn.cursor()
-                c.execute('DELETE FROM paises WHERE id = ?', (pais_id,))
-                conn.commit()
-                if c.rowcount == 0:
-                    conn.close()
-                    self.send_response(404)
-                    self.send_header('Content-type', 'application/json')
-                    self.end_headers()
-                    self.wfile.write(json.dumps({'error': 'País no encontrado'}).encode('utf-8'))
-                else:
-                    conn.close()
-                    self.send_response(200)
-                    self.send_header('Content-type', 'application/json')
-                    self.end_headers()
-                    response = {'mensaje': 'País eliminado correctamente', 'id': pais_id}
-                    self.wfile.write(json.dumps(response).encode('utf-8'))
-            except Exception as e:
-                self.send_error(500)
-            return
-
-        self.send_error(404)
-
-    def do_OPTIONS(self):
-        """Manejar solicitudes OPTIONS (CORS)"""
-        self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-        self.end_headers()
-
-    def end_headers(self):
-        """Agregar headers CORS a todas las respuestas"""
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-        super().end_headers()
-
-    def log_message(self, format, *args):
-        """Silenciar logs por defecto"""
-        return
-
-# ============================================================================
-# INICIAR SERVIDOR
-# ============================================================================
-
-if __name__ == '__main__':
-    import os
-    init_db()
-
-    PORT = int(os.environ.get('PORT', 3003))
-    server = HTTPServer(('0.0.0.0', PORT), PaisesHandler)
-    print(f'✓ API de Países corriendo en http://localhost:{PORT}')
-    print('✓ Endpoints disponibles:')
-    print(f'  GET    http://localhost:{PORT}/api/paises')
-    print(f'  GET    http://localhost:{PORT}/api/paises/{{id}}')
-    print(f'  POST   http://localhost:{PORT}/api/paises')
-    print(f'  PUT    http://localhost:{PORT}/api/paises/{{id}}')
-    print(f'  DELETE http://localhost:{PORT}/api/paises/{{id}}')
-    print('\n✓ Presiona Ctrl+C para detener el servidor\n')
-
+@app.get("/api/paises/{id}", response_model=Pais, tags=["Países"])
+async def obtener_pais(id: int):
+    """Obtiene un país específico por su ID"""
     try:
-        server.serve_forever()
-    except KeyboardInterrupt:
-        print('\n✓ Servidor detenido')
-        server.server_close()
+        conn = get_db()
+        c = conn.cursor()
+        c.execute('SELECT id, nombre, dirigente FROM paises WHERE id = ?', (id,))
+        row = c.fetchone()
+        conn.close()
+        
+        if not row:
+            raise HTTPException(status_code=404, detail='País no encontrado')
+        
+        return Pais(id=row[0], nombre=row[1], dirigente=row[2])
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Error al obtener país: {str(e)}')
+
+@app.post("/api/paises", response_model=Pais, status_code=201, tags=["Países"])
+async def crear_pais(pais: Pais):
+    """Crea un nuevo país
+    
+    Body: { "nombre": "string", "dirigente": "string" }
+    """
+    try:
+        conn = get_db()
+        c = conn.cursor()
+        c.execute('INSERT INTO paises (nombre, dirigente) VALUES (?, ?)', 
+                  (pais.nombre, pais.dirigente))
+        conn.commit()
+        pais_id = c.lastrowid
+        conn.close()
+        
+        return Pais(id=pais_id, nombre=pais.nombre, dirigente=pais.dirigente)
+    except sqlite3.IntegrityError:
+        raise HTTPException(status_code=400, detail='El país ya existe')
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Error al crear país: {str(e)}')
+
+@app.put("/api/paises/{id}", response_model=Pais, tags=["Países"])
+async def actualizar_pais(id: int, pais: Pais):
+    """Actualiza un país existente
+    
+    Body: { "nombre": "string", "dirigente": "string" }
+    """
+    try:
+        conn = get_db()
+        c = conn.cursor()
+        c.execute('UPDATE paises SET nombre = ?, dirigente = ? WHERE id = ?',
+                  (pais.nombre, pais.dirigente, id))
+        conn.commit()
+        
+        if c.rowcount == 0:
+            conn.close()
+            raise HTTPException(status_code=404, detail='País no encontrado')
+        
+        conn.close()
+        return Pais(id=id, nombre=pais.nombre, dirigente=pais.dirigente)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Error al actualizar país: {str(e)}')
+
+@app.delete("/api/paises/{id}", tags=["Países"])
+async def eliminar_pais(id: int):
+    """Elimina un país"""
+    try:
+        conn = get_db()
+        c = conn.cursor()
+        c.execute('DELETE FROM paises WHERE id = ?', (id,))
+        conn.commit()
+        
+        if c.rowcount == 0:
+            conn.close()
+            raise HTTPException(status_code=404, detail='País no encontrado')
+        
+        conn.close()
+        return {"mensaje": "País eliminado correctamente", "id": id}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Error al eliminar país: {str(e)}')
+
+# ============================================================================
+# PUNTO DE ENTRADA
+# ============================================================================
+
+if __name__ == "__main__":
+    import uvicorn
+    print('✓ Iniciando API FastAPI en http://localhost:3003')
+    print('✓ Documentación Swagger: http://localhost:3003/docs')
+    print('✓ Documentación ReDoc: http://localhost:3003/redoc')
+    uvicorn.run(app, host='0.0.0.0', port=3003)

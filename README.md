@@ -8,29 +8,30 @@
 - **Maximiliano Urrutia Araya RUT: 21.573.565-6**
 
 3 APIs REST independientes con tecnologías diferentes:
-- **API 1**: Usuarios (Express + TypeScript + SQLite) - Puerto 3001
+- **API 1**: Usuarios (NestJS + TypeScript + SQLite) - Puerto 3001
 - **API 2**: Ciudades (Express + TypeScript + SQLite) - Puerto 3002  
-- **API 3**: Países (FastAPI + Python + SQLite) - Puerto 3003
+- **API 3**: Países (Python HTTP nativo + SQLite) - Puerto 3003
 
 ## Instalación Rápida
 
 ### Requisitos
-- Node.js v18+
+- Node.js v16+
 - Python 3.9+
 
 ✅ **Sin bases de datos externas** - Todo local con SQLite
+✅ **API 3 sin dependencias externas** - Solo librerías estándar de Python
 
 ### Pasos
 
-1. **Instalar y ejecutar API 1 (Usuarios)**
+1. **Instalar y ejecutar API 1 (Usuarios - NestJS)**
 ```bash
 cd api-nestjs-usuarios
 npm install
-npm run dev
+npm run start:dev
 # http://localhost:3001
 ```
 
-2. **Instalar y ejecutar API 2 (Ciudades)** - En otra terminal
+2. **Instalar y ejecutar API 2 (Ciudades - Express)** - En otra terminal
 ```bash
 cd api-express-ciudades
 npm install
@@ -38,14 +39,12 @@ npm run dev
 # http://localhost:3002
 ```
 
-3. **Instalar y ejecutar API 3 (Países)** - En otra terminal
+3. **Ejecutar API 3 (Países - Python)** - En otra terminal
 ```bash
 cd api-fastapi-paises
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn main:app --host 0.0.0.0 --port 3003 --reload
+python main.py
 # http://localhost:3003
+# ✓ Sin instalación de dependencias requerida
 ```
 
 
@@ -104,8 +103,6 @@ curl -X POST http://localhost:3003/api/paises \
 - Swagger: http://localhost:3003/docs
 - ReDoc: http://localhost:3003/redoc
 
-## Verificar que funciona
-
 ```bash
 curl http://localhost:3001/api/usuarios
 curl http://localhost:3002/api/ciudades
@@ -123,19 +120,19 @@ taskkill /PID <PID> /F
 **"Module not found"**
 ```bash
 npm install
-pip install -r requirements.txt
+# (No es necesario pip install para la API de Países)
 ```
 
 ## Docker (Opcional)
 
 ```bash
-docker-compose up -d  # Inicia PostgreSQL y MySQL
+docker-compose up -d  # Inicia contenedores si están configurados
 ```
 
-## Postman
+## Documentación Detallada
 
-Importar `Postman_Collection.json` para probar todos los endpoints.
-
----
-
-Ver detalles en cada carpeta de API con su `README.md`.
+Para documentación completa y específica de cada API, ver:
+- `api-express-ciudades/README.md` - Guía Express
+- `api-fastapi-paises/README.md` - Guía Python HTTP
+- `api-nestjs-usuarios/README.md` - Guía NestJS
+- `API_DOCUMENTATION.md` - Comparativa técnica de todas las APIs
