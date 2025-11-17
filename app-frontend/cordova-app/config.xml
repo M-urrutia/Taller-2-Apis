@@ -6,8 +6,12 @@
         Apache Cordova Team
     </author>
     <content src="index.html" />
+    
+    <!-- Permitir acceso a recursos externos -->
+    <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
+    <allow-navigation href="https://*.onrender.com/*" />
     
     <preference name="SplashScreenDelay" value="0" />
     <preference name="AutoHideSplashScreen" value="true" />
