@@ -120,12 +120,6 @@ netstat -ano | findstr :3001
 taskkill /PID <PID> /F
 ```
 
-**"Cannot connect to PostgreSQL"**
-- Verificar que PostgreSQL está corriendo y BD `db_usuarios` existe
-
-**"Cannot connect to MySQL"**
-- Verificar que MySQL está corriendo y BD `db_ciudades` existe
-
 **"Module not found"**
 ```bash
 npm install
