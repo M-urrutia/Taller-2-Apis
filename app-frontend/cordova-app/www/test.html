@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Test</title>
+</head>
+<body style="padding: 20px; font-family: Arial;">
+    <h1>Probando Cordova</h1>
+    <div id="status" style="padding: 20px; background: yellow; margin: 10px 0;">
+        Cargando JavaScript...
+    </div>
+    
+    <script src="cordova.js"></script>
+    <script>
+        document.getElementById('status').innerHTML = 'JavaScript funcionando!';
+        document.getElementById('status').style.background = 'lightblue';
+        
+        document.addEventListener('deviceready', onDeviceReady, false);
+        
+        function onDeviceReady() {
+            document.getElementById('status').innerHTML = 'DeviceReady OK!<br>SQLite: ' + (window.sqlitePlugin ? 'SI disponible' : 'NO disponible');
+            document.getElementById('status').style.background = 'lightgreen';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="description" content="Aplicación móvil para gestionar usuarios, países y ciudades" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: https://cdn.tailwindcss.com 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com">
+    <title>App APIs - Gestión Integral</title>
+    <!-- Tailwind CDN (mobile-first) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Animaciones personalizadas */
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .fade-in { animation: fadeIn 0.3s ease-out; }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      .spinner {
+        border: 3px solid rgba(59, 130, 246, 0.3);
+        border-top-color: #3b82f6;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 0.8s linear infinite;
+      }
+      
+      /* Tabs activos */
+      .tab-active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transform: scale(1.05);
+        color: white;
+      }
+      .tab-inactive {
+        background: #e5e7eb;
+        color: #1f2937;
+      }
+      .tab-inactive:hover { 
+        background: #d1d5db;
+        color: #111827;
+      }
+      
+      /* Cards */
+      .card { transition: all 0.2s; }
+      .card:active { transform: scale(0.98); }
+    </style>
+  </head>
+  <body class="bg-gradient-to-br from-blue-50 to-indigo-100 text-gray-900 min-h-screen flex flex-col">
+    <!-- Header con navegación -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+      <div class="max-w-4xl mx-auto px-4 py-3">
+        <h1 class="text-xl font-bold text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3">
+          Gestión Integral APIs
+        </h1>
+        <nav class="flex gap-2 justify-center">
+          <button id="tab-usuarios" class="tab-btn px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 border-b-2">
+            👥 Usuarios
+          </button>
+          <button id="tab-ciudades" class="tab-btn px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 border-b-2">
+            🏙️ Ciudades
+          </button>
+          <button id="tab-paises" class="tab-btn px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 border-b-2">
+            🌍 Países
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Área de notificaciones -->
+    <div id="notification-area" class="fixed top-20 left-0 right-0 z-40 px-4 pointer-events-none"></div>
+
+    <!-- Contenido principal -->
+    <main class="flex-1 max-w-4xl mx-auto w-full px-4 py-6">
+      <!-- Loading spinner -->
+      <div id="loading-spinner" class="hidden flex flex-col items-center justify-center py-12">
+        <div class="spinner"></div>
+        <p class="mt-4 text-gray-600 text-sm">Cargando datos...</p>
+        <p class="mt-2 text-gray-500 text-xs">Primera carga puede tardar ~50 segundos</p>
+      </div>
+
+      <!-- Error message -->
+      <div id="error-message" class="hidden bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+        <p class="text-red-800"></p>
+      </div>
+
+      <!-- Contenido dinámico -->
+      <div id="content" class="space-y-4 fade-in">
+        <div id="tab-content"></div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-auto">
+      <div class="max-w-4xl mx-auto px-4 py-4">
+        <div class="text-center">
+          <p class="text-xs text-gray-500 mb-1">Desarrollado con JavaScript Puro + Tailwind CSS</p>
+          <p class="text-xs text-gray-400">Mobile First • Responsive Design</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="cordova.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

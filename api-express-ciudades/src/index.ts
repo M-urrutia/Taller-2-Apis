@@ -159,7 +159,7 @@ app.delete('/api/ciudades/:id', (req: Request, res: Response) => {
 /**
  * Iniciar servidor
  */
-const PORT = 3002;
+const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
   console.log(`✓ API Ciudades (Express) corriendo en http://localhost:${PORT}`);
   console.log('✓ Endpoints disponibles:');

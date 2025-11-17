@@ -254,16 +254,18 @@ class PaisesHandler(BaseHTTPRequestHandler):
 # ============================================================================
 
 if __name__ == '__main__':
+    import os
     init_db()
 
-    server = HTTPServer(('0.0.0.0', 3003), PaisesHandler)
-    print('✓ API de Países corriendo en http://localhost:3003')
+    PORT = int(os.environ.get('PORT', 3003))
+    server = HTTPServer(('0.0.0.0', PORT), PaisesHandler)
+    print(f'✓ API de Países corriendo en http://localhost:{PORT}')
     print('✓ Endpoints disponibles:')
-    print('  GET    http://localhost:3003/api/paises')
-    print('  GET    http://localhost:3003/api/paises/{id}')
-    print('  POST   http://localhost:3003/api/paises')
-    print('  PUT    http://localhost:3003/api/paises/{id}')
-    print('  DELETE http://localhost:3003/api/paises/{id}')
+    print(f'  GET    http://localhost:{PORT}/api/paises')
+    print(f'  GET    http://localhost:{PORT}/api/paises/{{id}}')
+    print(f'  POST   http://localhost:{PORT}/api/paises')
+    print(f'  PUT    http://localhost:{PORT}/api/paises/{{id}}')
+    print(f'  DELETE http://localhost:{PORT}/api/paises/{{id}}')
     print('\n✓ Presiona Ctrl+C para detener el servidor\n')
 
     try:
