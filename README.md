@@ -1,5 +1,12 @@
 # Taller 2 - Tres APIs Independientes
 
+## Grupo 13 - Integrantes
+
+- **Andrés Hidalgo Ramallo RUT: 21.795.550-5**
+- **Benjamín Torres Inostroza RUT: 21.695.589-7**
+- **Benjamín Rojas Espejo RUT: 21.742.522-0**
+- **Maximiliano Urrutia Araya RUT: 21.573.565-6**
+
 3 APIs REST independientes con tecnologías diferentes:
 - **API 1**: Usuarios (Express + TypeScript + SQLite) - Puerto 3001
 - **API 2**: Ciudades (Express + TypeScript + SQLite) - Puerto 3002  
