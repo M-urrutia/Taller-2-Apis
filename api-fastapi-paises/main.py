@@ -15,7 +15,7 @@ Ejecutar: uvicorn main:app --host 0.0.0.0 --port 3003 --reload
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 import sqlite3
 from typing import List, Optional
 
@@ -50,14 +50,15 @@ class Pais(BaseModel):
     nombre: str
     dirigente: str
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "id": 1,
                 "nombre": "Chile",
                 "dirigente": "Gabriel Boric"
             }
         }
+    )
 
 # ============================================================================
 # UTILIDADES DE BASE DE DATOS

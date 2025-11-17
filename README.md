@@ -10,7 +10,7 @@
 3 APIs REST independientes con tecnologías diferentes:
 - **API 1**: Usuarios (NestJS + TypeScript + SQLite) - Puerto 3001
 - **API 2**: Ciudades (Express + TypeScript + SQLite) - Puerto 3002  
-- **API 3**: Países (Python HTTP nativo + SQLite) - Puerto 3003
+- **API 3**: Países (FastAPI + Python + SQLite) - Puerto 3003
 
 ## Instalación Rápida
 
@@ -19,7 +19,7 @@
 - Python 3.9+
 
 ✅ **Sin bases de datos externas** - Todo local con SQLite
-✅ **API 3 sin dependencias externas** - Solo librerías estándar de Python
+✅ **Cada API es independiente** - Tecnologías diferentes
 
 ### Pasos
 
@@ -39,15 +39,13 @@ npm run dev
 # http://localhost:3002
 ```
 
-3. **Ejecutar API 3 (Países - Python)** - En otra terminal
+3. **Instalar y ejecutar API 3 (Países - FastAPI)** - En otra terminal
 ```bash
 cd api-fastapi-paises
-python main.py
+pip install -r requirements.txt
+uvicorn main:app --host 0.0.0.0 --port 3003 --reload
 # http://localhost:3003
-# ✓ Sin instalación de dependencias requerida
 ```
-
-
 
 ## Endpoints
 
@@ -103,9 +101,16 @@ curl -X POST http://localhost:3003/api/paises \
 - Swagger: http://localhost:3003/docs
 - ReDoc: http://localhost:3003/redoc
 
+## Verificar que Todo Funciona
+
 ```bash
+# Terminal 1 - API Usuarios
 curl http://localhost:3001/api/usuarios
+
+# Terminal 2 - API Ciudades
 curl http://localhost:3002/api/ciudades
+
+# Terminal 3 - API Países
 curl http://localhost:3003/api/paises
 ```
 
@@ -117,22 +122,28 @@ netstat -ano | findstr :3001
 taskkill /PID <PID> /F
 ```
 
-**"Module not found"**
+**"Module not found (Node.js)"**
 ```bash
 npm install
-# (No es necesario pip install para la API de Países)
 ```
 
-## Docker (Opcional)
-
+**"ModuleNotFoundError (Python)"**
 ```bash
-docker-compose up -d  # Inicia contenedores si están configurados
+pip install -r requirements.txt
 ```
+
+## Stack Tecnológico
+
+| API | Lenguaje | Framework | DB | Puerto |
+|---|---|---|---|---|
+| Usuarios | TypeScript | NestJS | SQLite | 3001 |
+| Ciudades | TypeScript | Express | SQLite | 3002 |
+| Países | Python | FastAPI | SQLite | 3003 |
 
 ## Documentación Detallada
 
 Para documentación completa y específica de cada API, ver:
 - `api-express-ciudades/README.md` - Guía Express
-- `api-fastapi-paises/README.md` - Guía Python HTTP
+- `api-fastapi-paises/README.md` - Guía FastAPI
 - `api-nestjs-usuarios/README.md` - Guía NestJS
 - `API_DOCUMENTATION.md` - Comparativa técnica de todas las APIs

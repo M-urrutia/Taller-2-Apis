@@ -7,7 +7,7 @@ Este taller contiene 3 APIs backend y 1 frontend integrados:
 | API | Puerto | Tech | BD | Recurso |
 |-----|--------|------|----|---------| 
 | **api-express-ciudades** | 3002 | Express.js + TypeScript | SQLite | Ciudades |
-| **api-fastapi-paises** | 3003 | Python (HTTP puro) | SQLite | Países |
+| **api-fastapi-paises** | 3003 | FastAPI + Python | SQLite | Países |
 | **api-nestjs-usuarios** | 3001 | NestJS + TypeORM | SQLite | Usuarios |
 | **app-frontend** | - | JavaScript Vanilla | - | UI Web |
 
@@ -69,10 +69,12 @@ npm run build && npm run start
 `api-fastapi-paises/main.py`
 
 ### 📦 Tecnologías
-- **Framework**: Python HTTP Server (librerías estándar)
+- **Framework**: FastAPI (framework moderno async)
+- **Servidor**: Uvicorn (ASGI)
 - **Lenguaje**: Python 3.9+
 - **Base de datos**: SQLite (db_paises.db)
-- **CORS**: Configurado automáticamente
+- **Validación**: Pydantic
+- **CORS**: Automáticamente habilitado
 
 ### 🔌 Endpoints
 
@@ -99,15 +101,21 @@ DELETE /api/paises/{id}
 
 ```bash
 cd api-fastapi-paises
-python main.py
+pip install -r requirements.txt
+uvicorn main:app --host 0.0.0.0 --port 3003 --reload
 ```
 
+**Documentación interactiva:**
+- Swagger UI: http://localhost:3003/docs
+- ReDoc: http://localhost:3003/redoc
+
 ### 💡 Características
-- ✓ Sin dependencias externas (usa librerías estándar)
-- ✓ Servidor HTTP nativo de Python
-- ✓ CORS habilitado para todas las rutas
-- ✓ Validación de JSON
+- ✓ Validación automática con Pydantic
 - ✓ Control de duplicados (nombre UNIQUE)
+- ✓ Manejo robusto de errores HTTP
+- ✓ Documentación automática (Swagger)
+- ✓ Type hints y validación integrada
+- ✓ CORS habilitado para todos los orígenes
 
 ---
 

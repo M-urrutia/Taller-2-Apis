@@ -34,8 +34,8 @@ Instrucciones rápidas:
    Por ejemplo, en la consola del navegador antes de cargar la página:
 
    ```js
-   window.__API_BASE_CIUDADES__ = 'http://localhost:3000';
-   window.__API_BASE_PAISES__ = 'http://localhost:8000';
+   window.__API_BASE_CIUDADES__ = 'http://localhost:3002';
+   window.__API_BASE_PAISES__ = 'http://localhost:3003';
    window.__API_BASE_USUARIOS__ = 'http://localhost:3001';
    ```
 

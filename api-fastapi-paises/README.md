@@ -406,11 +406,6 @@ El archivo `db_paises.db` se crea automáticamente la primera vez que se ejecuta
 **Última actualización**: Noviembre 2025
 **Desarrollado para**: Taller 2 - Arquitectura de Microservicios
 
-## 📋 Requisitos
-
-- **Python** 3.9+
-- **pip** (opcional, para futuras extensiones)
-
 ## 🚀 Instalación y Ejecución
 
 ```bash
@@ -731,19 +726,6 @@ Un país con ese nombre ya existe. Usa otro nombre o actualiza el existente.
 
 ---
 
-## 📊 Comparación con Otras Implementaciones
-
-| Característica | FastAPI (Python) | Express (Node.js) | NestJS (Node.js) |
-|---|---|---|---|
-| Dependencias | 0 | 3+ | 10+ |
-| Tamaño | ~10 KB | ~100 KB | ~500 KB |
-| Curva aprendizaje | Baja | Media | Alta |
-| Rendimiento | Muy bueno | Excelente | Excelente |
-| Escalabilidad | Media | Alta | Muy Alta |
-| Framework | HTTP nativo | Minimalista | Enterprise |
-
----
-
 ## 📝 Stack Tecnológico
 
 - **Python 3.9+**: Lenguaje de programación
@@ -752,7 +734,3 @@ Un país con ese nombre ya existe. Usa otro nombre o actualiza el existente.
 - **json**: Parsing JSON
 - **socket**: Comunicación en red
 
----
-
-**Última actualización**: Noviembre 2025
-**Desarrollado para**: Taller 2 - Arquitectura de Microservicios

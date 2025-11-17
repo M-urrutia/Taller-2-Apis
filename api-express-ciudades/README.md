@@ -283,7 +283,3 @@ El archivo `ciudades.db` se crea automáticamente vacío.
 }
 ```
 
----
-
-**Última actualización**: Noviembre 2025
-**Desarrollado para**: Taller 2 - Arquitectura de Microservicios

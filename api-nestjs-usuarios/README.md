@@ -432,22 +432,3 @@ npm run build
   "test:cov": "jest --coverage"             // Cobertura
 }
 ```
-
----
-
-## 🚀 Mejoras Futuras
-
-- [ ] Agregar Swagger/OpenAPI documentation
-- [ ] Implementar validación con `class-validator`
-- [ ] Agregar autenticación JWT
-- [ ] Implementar paginación
-- [ ] Agregar filtros y búsqueda
-- [ ] Implementar soft delete
-- [ ] Agregar logging centralizado
-- [ ] Configurar HTTPS/TLS
-
----
-
-**Última actualización**: Noviembre 2025
-**Desarrollado para**: Taller 2 - Arquitectura de Microservicios
-**Nivel**: Intermedio/Avanzado
